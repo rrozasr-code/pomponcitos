@@ -10,15 +10,17 @@ const CAPA_PISO := 1
 const CAPA_PLATAFORMA_ROJA := 2
 const CAPA_PLATAFORMA_AZUL := 4
 const CAPA_POMPONES := 8
+const CAPA_CAJAS := 16
 
 @export var color: TipoColor = TipoColor.ROJO
 @export var radio: float = 32.0
 
-# Estas tres son las que se pueden cambiar desde el Inspector de Godot,
-# sin tocar este código, para probar cómo se siente el movimiento.
+# Estas se pueden cambiar desde el Inspector de Godot, sin tocar este
+# código, para probar cómo se siente el movimiento.
 @export var velocidad: float = 300.0
 @export var fuerza_salto: float = 700.0
 @export var gravedad: float = 1500.0
+@export var rebote_sobre_pompon: float = 1000.0
 
 # Cuando no es tu turno (en modo Solo, el que no controlas), esto queda
 # en false y el pompón no se mueve solo, pero sigue afectado por la gravedad.
@@ -33,9 +35,9 @@ func _ready() -> void:
 	$ColisionPompon.shape = forma
 
 	# Todo pompón está en la capa "Pompones" (así se pueden pisar entre ellos),
-	# y puede chocar con el piso gris y con las plataformas de SU color.
+	# y puede chocar con el piso gris, las cajas, y las plataformas de SU color.
 	collision_layer = CAPA_POMPONES
-	var mascara := CAPA_PISO | CAPA_POMPONES
+	var mascara := CAPA_PISO | CAPA_POMPONES | CAPA_CAJAS
 	if color == TipoColor.ROJO:
 		mascara |= CAPA_PLATAFORMA_ROJA
 	else:
@@ -54,24 +56,30 @@ func _physics_process(delta: float) -> void:
 
 	# Si no es el pompón que estás controlando ahora, se queda quieto
 	# (no camina solo), pero igual cae si no tiene piso debajo.
-	if not controlado:
+	if controlado:
+		# Movimiento izquierda/derecha con las flechas del teclado.
+		var direccion := 0.0
+		if Input.is_key_pressed(KEY_LEFT):
+			direccion -= 1.0
+		if Input.is_key_pressed(KEY_RIGHT):
+			direccion += 1.0
+		velocity.x = direccion * velocidad
+
+		# Saltar: solo si está tocando el piso, así no puede saltar en el aire.
+		if Input.is_key_pressed(KEY_SPACE) and is_on_floor():
+			velocity.y = -fuerza_salto
+	else:
 		velocity.x = 0.0
-		move_and_slide()
-		return
-
-	# Movimiento izquierda/derecha con las flechas del teclado.
-	var direccion := 0.0
-	if Input.is_key_pressed(KEY_LEFT):
-		direccion -= 1.0
-	if Input.is_key_pressed(KEY_RIGHT):
-		direccion += 1.0
-	velocity.x = direccion * velocidad
-
-	# Saltar: solo si está tocando el piso, así no puede saltar en el aire.
-	if Input.is_key_pressed(KEY_SPACE) and is_on_floor():
-		velocity.y = -fuerza_salto
 
 	move_and_slide()
+
+	# Rebote: los pompones son blandos, así que si uno cae justo encima
+	# del OTRO pompón, rebota más alto, como en un trampolín.
+	for i in get_slide_collision_count():
+		var colision := get_slide_collision(i)
+		var otro := colision.get_collider()
+		if otro is CharacterBody2D and otro.get_script() == get_script() and colision.get_normal().y < -0.5:
+			velocity.y = -rebote_sobre_pompon
 
 
 func _draw() -> void:

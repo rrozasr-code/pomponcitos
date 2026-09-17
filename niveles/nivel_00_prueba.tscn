@@ -1,8 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/gestor_nivel.gd" id="1"]
 [ext_resource type="PackedScene" path="res://escenas/pompon.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://escenas/puerta.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://escenas/boton.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://escenas/compuerta.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://escenas/caja.tscn" id="6"]
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(1280, 80)
@@ -79,3 +82,15 @@ position = Vector2(1180, 590)
 
 [node name="VisualPuerta" parent="PuertaAzul" index="1"]
 color = Color(0.2, 0.2, 0.8, 1)
+
+[node name="Caja" parent="." instance=ExtResource("6")]
+position = Vector2(420, 600)
+
+[node name="Boton" parent="." instance=ExtResource("4")]
+position = Vector2(500, 632)
+
+[node name="Compuerta" parent="." instance=ExtResource("5")]
+position = Vector2(560, 570)
+
+[connection signal="activado" from="Boton" to="Compuerta" method="abrir"]
+[connection signal="desactivado" from="Boton" to="Compuerta" method="cerrar"]
