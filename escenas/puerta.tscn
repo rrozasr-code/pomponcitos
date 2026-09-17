@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3]
+
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(70, 110)
+
+[node name="Puerta" type="Area2D"]
+collision_layer = 0
+collision_mask = 8
+
+[node name="ColisionPuerta" type="CollisionShape2D" parent="."]
+shape = SubResource("1")
+
+[node name="VisualPuerta" type="ColorRect" parent="."]
+offset_left = -35.0
+offset_top = -55.0
+offset_right = 35.0
+offset_bottom = 55.0
+color = Color(0.7, 0.7, 0.7, 1)
