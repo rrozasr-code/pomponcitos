@@ -1,12 +1,14 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://b8t4gn533lwih"]
 
-[ext_resource type="Script" path="res://scripts/pompon.gd" id="1"]
+[ext_resource type="Script" uid="uid://by87xalphlwl6" path="res://scripts/pompon.gd" id="1"]
 
 [sub_resource type="CircleShape2D" id="1"]
 radius = 32.0
 
-[node name="Pompon" type="CharacterBody2D"]
+[node name="Pompon" type="CharacterBody2D" unique_id=477288747]
 script = ExtResource("1")
+velocidad = 500.0
+gravedad = 2000.0
 
-[node name="ColisionPompon" type="CollisionShape2D" parent="."]
+[node name="ColisionPompon" type="CollisionShape2D" parent="." unique_id=1279454220]
 shape = SubResource("1")
