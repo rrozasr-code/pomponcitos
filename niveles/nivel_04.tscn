@@ -1,0 +1,110 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/gestor_nivel.gd" id="1"]
+[ext_resource type="PackedScene" path="res://escenas/pompon.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://escenas/puerta.tscn" id="3"]
+
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(400, 80)
+
+[sub_resource type="RectangleShape2D" id="2"]
+size = Vector2(680, 80)
+
+[sub_resource type="RectangleShape2D" id="3"]
+size = Vector2(160, 30)
+
+[sub_resource type="RectangleShape2D" id="4"]
+size = Vector2(1400, 100)
+
+[node name="Nivel04" type="Node2D"]
+script = ExtResource("1")
+pompon_rojo_path = NodePath("PomponRojo")
+pompon_azul_path = NodePath("PomponAzul")
+puerta_roja_path = NodePath("PuertaRoja")
+puerta_azul_path = NodePath("PuertaAzul")
+zona_caida_path = NodePath("ZonaCaida")
+
+[node name="SueloIzquierdo" type="StaticBody2D" parent="."]
+position = Vector2(200, 680)
+collision_layer = 1
+
+[node name="ColisionSueloIzquierdo" type="CollisionShape2D" parent="SueloIzquierdo"]
+shape = SubResource("1")
+
+[node name="VisualSueloIzquierdo" type="ColorRect" parent="SueloIzquierdo"]
+offset_left = -200.0
+offset_top = -40.0
+offset_right = 200.0
+offset_bottom = 40.0
+color = Color(0.36, 0.25, 0.2, 1)
+
+[node name="SueloDerecho" type="StaticBody2D" parent="."]
+position = Vector2(940, 680)
+collision_layer = 1
+
+[node name="ColisionSueloDerecho" type="CollisionShape2D" parent="SueloDerecho"]
+shape = SubResource("2")
+
+[node name="VisualSueloDerecho" type="ColorRect" parent="SueloDerecho"]
+offset_left = -340.0
+offset_top = -40.0
+offset_right = 340.0
+offset_bottom = 40.0
+color = Color(0.36, 0.25, 0.2, 1)
+
+[node name="ZonaCaida" type="Area2D" parent="."]
+position = Vector2(640, 850)
+collision_layer = 0
+collision_mask = 8
+
+[node name="ColisionZonaCaida" type="CollisionShape2D" parent="ZonaCaida"]
+shape = SubResource("4")
+
+[node name="PedestalRojo" type="StaticBody2D" parent="."]
+position = Vector2(870, 520)
+collision_layer = 2
+collision_mask = 0
+
+[node name="ColisionPedestalRojo" type="CollisionShape2D" parent="PedestalRojo"]
+shape = SubResource("3")
+
+[node name="VisualPedestalRojo" type="ColorRect" parent="PedestalRojo"]
+offset_left = -80.0
+offset_top = -15.0
+offset_right = 80.0
+offset_bottom = 15.0
+color = Color(0.8, 0.2, 0.2, 1)
+
+[node name="PedestalAzul" type="StaticBody2D" parent="."]
+position = Vector2(1080, 520)
+collision_layer = 4
+collision_mask = 0
+
+[node name="ColisionPedestalAzul" type="CollisionShape2D" parent="PedestalAzul"]
+shape = SubResource("3")
+
+[node name="VisualPedestalAzul" type="ColorRect" parent="PedestalAzul"]
+offset_left = -80.0
+offset_top = -15.0
+offset_right = 80.0
+offset_bottom = 15.0
+color = Color(0.2, 0.2, 0.8, 1)
+
+[node name="PomponRojo" parent="." instance=ExtResource("2")]
+position = Vector2(100, 600)
+
+[node name="PomponAzul" parent="." instance=ExtResource("2")]
+position = Vector2(180, 600)
+color = 1
+
+[node name="PuertaRoja" parent="." instance=ExtResource("3")]
+position = Vector2(870, 450)
+
+[node name="VisualPuerta" parent="PuertaRoja" index="1"]
+color = Color(0.8, 0.2, 0.2, 1)
+
+[node name="PuertaAzul" parent="." instance=ExtResource("3")]
+position = Vector2(1080, 450)
+
+[node name="VisualPuerta" parent="PuertaAzul" index="1"]
+color = Color(0.2, 0.2, 0.8, 1)

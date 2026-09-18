@@ -11,6 +11,10 @@ extends Node2D
 @export var puerta_roja_path: NodePath
 @export var puerta_azul_path: NodePath
 
+# Esta es opcional: si el nivel tiene un pozo, se conecta acá. Si un nivel
+# no tiene pozos (como el Nivel 1), simplemente se deja vacía.
+@export var zona_caida_path: NodePath
+
 var pompon_rojo: CharacterBody2D
 var pompon_azul: CharacterBody2D
 var puerta_roja: Area2D
@@ -36,6 +40,16 @@ func _ready() -> void:
 	puerta_roja.body_exited.connect(_al_salir_puerta_roja)
 	puerta_azul.body_entered.connect(_al_entrar_puerta_azul)
 	puerta_azul.body_exited.connect(_al_salir_puerta_azul)
+
+	# Si este nivel tiene pozos, cuando un pompón se cae se reinicia el
+	# nivel entero (no hay vidas ni "game over", como pide el diseño).
+	if zona_caida_path != NodePath():
+		var zona_caida: Area2D = get_node(zona_caida_path)
+		zona_caida.body_entered.connect(_al_caer_a_un_pozo)
+
+
+func _al_caer_a_un_pozo(_cuerpo: Node2D) -> void:
+	get_tree().reload_current_scene()
 
 
 func _unhandled_input(event: InputEvent) -> void:
