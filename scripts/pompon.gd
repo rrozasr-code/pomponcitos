@@ -21,6 +21,7 @@ const CAPA_CAJAS := 16
 @export var fuerza_salto: float = 700.0
 @export var gravedad: float = 1500.0
 @export var rebote_sobre_pompon: float = 1000.0
+@export var fuerza_empuje_caja: float = 3000.0
 
 # Cuando no es tu turno (en modo Solo, el que no controlas), esto queda
 # en false y el pompón no se mueve solo, pero sigue afectado por la gravedad.
@@ -73,13 +74,20 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-	# Rebote: los pompones son blandos, así que si uno cae justo encima
-	# del OTRO pompón, rebota más alto, como en un trampolín.
+	# Godot no empuja las cajas solo porque un CharacterBody2D choque contra
+	# ellas (las trata como una pared). Por eso revisamos con qué chocamos
+	# y, si es una caja, la empujamos nosotros mismos con una fuerza.
 	for i in get_slide_collision_count():
 		var colision := get_slide_collision(i)
 		var otro := colision.get_collider()
 		if otro is CharacterBody2D and otro.get_script() == get_script() and colision.get_normal().y < -0.5:
+			# Rebote: los pompones son blandos, así que si uno cae justo
+			# encima del OTRO pompón, rebota más alto, como en un trampolín.
 			velocity.y = -rebote_sobre_pompon
+		elif otro is RigidBody2D:
+			# La normal de la colisión apunta desde la caja hacia nosotros;
+			# empujamos para el otro lado, o sea hacia adentro de la caja.
+			otro.apply_central_force(-colision.get_normal() * fuerza_empuje_caja)
 
 
 func _draw() -> void:
